@@ -1,4 +1,17 @@
 const { createObjectCsvStringifier } = require("csv-writer");
+const csv = require("csv-parser");
+
+// Convert CSV stream to JSON
+const csvToJson = async (csvStream) => {
+  return new Promise((resolve, reject) => {
+    const jsonData = [];
+    
+    csvStream.pipe(csv())
+      .on("data", (row) => jsonData.push(row))
+      .on("end", () => resolve(jsonData))
+      .on("error", (error) => reject(error));
+  });
+};
 
 // Función para convertir JSON a CSV
 const jsonToCsv = (data, headers) => {
@@ -35,4 +48,4 @@ const csvHeaders = {
   ],
 };
 
-module.exports = { jsonToCsv, csvHeaders };
+module.exports = { csvToJson ,jsonToCsv, csvHeaders };

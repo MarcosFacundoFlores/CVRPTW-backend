@@ -1,0 +1,44 @@
+{
+    "custNode": [
+      {
+        "id": 1,
+        "name": "Cliente A",
+        "x": 10,
+        "y": 20,
+        "demand": 50,
+        "begin": 8,
+        "end": 18,
+        "service": 30
+      },
+      {
+        "id": 2,
+        "name": "Cliente B",
+        "x": 15,
+        "y": 25,
+        "demand": 30,
+        "begin": 9,
+        "end": 17,
+        "service": 20
+      },
+      {
+        "id": 3,
+        "name": "Cliente C",
+        "x": 40,
+        "y": 50,
+        "demand": 70,
+        "begin": 7,
+        "end": 19,
+        "service": 40
+      },
+      {
+        "id": 4,
+        "name": "Cliente D",
+        "x": 60,
+        "y": 80,
+        "demand": 90,
+        "begin": 6,
+        "end": 20,
+        "service": 25
+      }
+    ]
+  }
