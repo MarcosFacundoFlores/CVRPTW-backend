@@ -16,12 +16,7 @@ router.post("/execute", ensureRuntimeToken, async (req, res) => {
       },
     });
 
-    const jobRunId = response.data.entity?.job_run?.runtime_job_id;
-    if (!jobRunId) {
-      return res.status(500).json({ error: "No se pudo obtener el jobRunId" });
-    }
-
-    res.json({ message: "Job ejecutado", jobRunId });
+    res.json({ message: "Job ejecutado" });
   } catch (error) {
     console.error("❌ Error ejecutando el job:", error.response?.data || error);
     res.status(500).json({ error: "Error ejecutando el job", details: error.message });
