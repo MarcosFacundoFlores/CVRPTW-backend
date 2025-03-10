@@ -1,10 +1,16 @@
 const { createObjectCsvStringifier } = require("csv-writer");
 
-// Función genérica para convertir JSON a CSV
+// Función para convertir JSON a CSV
 const jsonToCsv = (data, headers) => {
   const csvStringifier = createObjectCsvStringifier({ header: headers });
+
+  if (!Array.isArray(data)) {
+    data = [data]; // Asegurar que siempre sea un array
+  }
+
   const csvHeader = csvStringifier.getHeaderString();
-  const csvBody = csvStringifier.stringifyRecords([data]); // Solo una fila
+  const csvBody = csvStringifier.stringifyRecords(data);
+
   return csvHeader + csvBody;
 };
 
@@ -23,9 +29,9 @@ const csvHeaders = {
     { id: "x", title: "x" },
     { id: "y", title: "y" },
     { id: "demand", title: "demand" },
-    { id: "begin", title: "begin"},
-    {id: "end", title: "end"},
-    {id: "service", title: "service"},
+    { id: "begin", title: "begin" },
+    { id: "end", title: "end" },
+    { id: "service", title: "service" },
   ],
 };
 

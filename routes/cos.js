@@ -6,7 +6,7 @@ const { uploadToCos } = require("../utils/cosHelper");
 const router = express.Router();
 
 // Guardar configuración en COS
-router.post("/saveConfig", ensureCosToken, async (req, res) => {
+router.put("/saveConfig", ensureCosToken, async (req, res) => {
   try {
     console.log("📝 Recibido en /saveConfig:", req.body);
     const { config } = req.body;
@@ -22,16 +22,19 @@ router.post("/saveConfig", ensureCosToken, async (req, res) => {
 });
 
 // Guardar nodos de clientes en COS
-router.post("/saveCustNode", ensureCosToken, async (req, res) => {
+router.put("/saveCustNode", ensureCosToken, async (req, res) => {
   try {
     const { custNode } = req.body;
-    if (!custNode) return res.status(400).json({ error: "Falta el campo 'custNode'" });
+    if (!custNode || !Array.isArray(custNode) || custNode.length === 0) {
+      return res.status(400).json({ error: "Falta el campo 'custNode' o está vacío" });
+    }
 
     const csvData = jsonToCsv(custNode, csvHeaders.custNode);
     const response = await uploadToCos(process.env.BUCKET_NAME, "custNode.csv", csvData, req.cosToken);
 
     res.json({ message: "Archivo custNode subido a COS", fileName: response.fileName });
   } catch (error) {
+    console.error("❌ Error al subir custNode:", error.response?.data || error);
     res.status(500).json({ error: "Error al subir custNode", details: error.message });
   }
 });
