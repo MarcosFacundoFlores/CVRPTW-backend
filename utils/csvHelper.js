@@ -38,7 +38,6 @@ const csvHeaders = {
   ],
   custNode: [
     { id: "id", title: "id" },
-    { id: "name", title: "name" },
     { id: "x", title: "x" },
     { id: "y", title: "y" },
     { id: "demand", title: "demand" },
