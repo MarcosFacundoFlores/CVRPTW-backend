@@ -1,7 +1,7 @@
 const express = require("express");
 const { ensureCosToken } = require("../config/auth");
-const { jsonToCsv, csvHeaders } = require("../utils/csvHelper");
-const { uploadToCos } = require("../utils/cosHelper");
+const { jsonToCsv, csvHeaders, csvToJson } = require("../utils/csvHelper");
+const { uploadToCos, getToCos } = require("../utils/cosHelper");
 
 const router = express.Router();
 
@@ -13,11 +13,21 @@ router.put("/saveConfig", ensureCosToken, async (req, res) => {
     if (!config) return res.status(400).json({ error: "Falta el campo 'config'" });
 
     const csvData = jsonToCsv(config, csvHeaders.config);
-    const response = await uploadToCos(process.env.BUCKET_NAME, "config.csv", csvData, req.cosToken);
+    const response = await uploadToCos(process.env.BUCKET_NAME, "Config.csv", csvData, req.cosToken);
 
     res.json({ message: "Archivo config subido a COS", fileName: response.fileName });
   } catch (error) {
     res.status(500).json({ error: "Error al subir config", details: error.message });
+  }
+});
+
+router.get("/getConfig", ensureCosToken, async (req, res) => {
+  try {
+    const response = await getToCos(process.env.BUCKET_NAME, "Config.csv", null, req.cosToken, true);
+    const csvData = csvToJson(response.data);
+    res.json({ data: response.data });
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener config", details: error.message });
   }
 });
 
