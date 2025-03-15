@@ -20,4 +20,16 @@ const uploadToCos = async (bucketName, fileName, fileData, token) => {
   }
 };
 
-module.exports = { uploadToCos };
+const getFileUrl = (fileName) => {
+  return `https://${process.env.ENDPOINT_REGION}.cloud-object-storage.appdomain.cloud/${process.env.BUCKET_NAME}/${fileName}`;
+};
+
+const fetchFile = async (fileUrl, token) => {
+  const response = await axios.get(fileUrl, {
+    headers: { Authorization: `Bearer ${token}` },
+    responseType: "stream",
+  });
+  return response;
+};
+
+module.exports = { uploadToCos, getFileUrl, fetchFile };
