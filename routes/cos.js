@@ -39,7 +39,6 @@ router.get("/getcustNodes", ensureCosToken, async (req, res) => {
     const fileUrl = await getFileUrl("custNode.csv");
     const response = await fetchFile(fileUrl, req.cosToken);
     const jsonData = await csvToJson(response.data);
-    console.log("GET /getcustNodes status: 200");
     res.json({ status: "OK", data: jsonData });
   } catch (error) {
     console.log("GET /getcustNodes status: 500");
