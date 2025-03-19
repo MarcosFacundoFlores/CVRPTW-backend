@@ -1,7 +1,7 @@
 const express = require("express");
 const { ensureCosToken } = require("../config/auth");
-const { jsonToCsv, csvHeaders } = require("../utils/csvHelper");
-const { uploadToCos } = require("../utils/cosHelper");
+const { jsonToCsv, csvHeaders, csvToJson } = require("../utils/csvHelper");
+const { uploadToCos, fetchFile, getFileUrl } = require("../utils/cosHelper");
 
 const router = express.Router();
 
@@ -13,7 +13,7 @@ router.put("/saveConfig", ensureCosToken, async (req, res) => {
     if (!config) return res.status(400).json({ error: "Falta el campo 'config'" });
 
     const csvData = jsonToCsv(config, csvHeaders.config);
-    const response = await uploadToCos(process.env.BUCKET_NAME, "config.csv", csvData, req.cosToken);
+    const response = await uploadToCos(process.env.BUCKET_NAME, "Config.csv", csvData, req.cosToken);
 
     res.json({ message: "Archivo config subido a COS", fileName: response.fileName });
   } catch (error) {
@@ -21,6 +21,31 @@ router.put("/saveConfig", ensureCosToken, async (req, res) => {
   }
 });
 
+router.get("/getConfig", ensureCosToken, async (req, res) => {
+  try {
+    const fileUrl = await getFileUrl("Config.csv");
+    const response = await fetchFile(fileUrl, req.cosToken);
+    const jsonData = await csvToJson(response.data);
+    res.json({ status: "OK", data: jsonData });
+  } catch (error) {
+    console.error("❌ Error Procesando los Resultados desde COS:", error.response?.data || error);
+    res.status(500).json({ error: "Error Procesando los Resultados", details: error.message });
+  }
+});
+
+router.get("/getcustNodes", ensureCosToken, async (req, res) => {
+  try {
+    
+    const fileUrl = await getFileUrl("custNode.csv");
+    const response = await fetchFile(fileUrl, req.cosToken);
+    const jsonData = await csvToJson(response.data);
+    res.json({ status: "OK", data: jsonData });
+  } catch (error) {
+    console.log("GET /getcustNodes status: 500");
+    console.error("❌ Error Procesando los Resultados desde COS:", error.response?.data || error);
+    res.status(500).json({ error: "Error Procesando los Resultados", details: error.message });
+  }
+});
 // Guardar nodos de clientes en COS
 router.put("/saveCustNode", ensureCosToken, async (req, res) => {
   try {
